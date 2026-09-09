@@ -15,7 +15,7 @@ _CSV_FIELDS = (
     "expected_product",
     "condition",
     "predicted_product",
-    "best_candidate",
+    "evidence_candidate",
     "reference_image",
     "good_matches",
     "ransac_inliers",
@@ -34,7 +34,7 @@ class EvaluationRecord:
     expected_product: str
     condition: str
     predicted_product: str
-    best_candidate: str
+    evidence_candidate: str
     reference_image: str
     good_matches: int
     ransac_inliers: int
@@ -103,7 +103,7 @@ def evaluate_queries(
                 expected_product=expected_product,
                 condition=condition,
                 predicted_product=prediction,
-                best_candidate=strongest_candidate.product_label,
+                evidence_candidate=evidence_candidate.product_label,
                 reference_image=_relative_path(evidence_candidate.reference_path, references_root),
                 good_matches=evidence_candidate.good_match_count,
                 ransac_inliers=evidence_candidate.inlier_count,
@@ -158,7 +158,7 @@ def write_evaluation_csv(records: list[EvaluationRecord], output_path: Path) -> 
                     "expected_product": record.expected_product,
                     "condition": record.condition,
                     "predicted_product": record.predicted_product,
-                    "best_candidate": record.best_candidate,
+                    "evidence_candidate": record.evidence_candidate,
                     "reference_image": record.reference_image,
                     "good_matches": record.good_matches,
                     "ransac_inliers": record.ransac_inliers,

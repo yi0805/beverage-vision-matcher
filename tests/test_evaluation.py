@@ -3,8 +3,10 @@
 import csv
 from pathlib import Path
 
+import cv2
 import pytest
 
+import beverage_matcher.evaluation as evaluation
 from beverage_matcher.evaluation import (
     EvaluationRecord,
     discover_query_images,
@@ -14,6 +16,7 @@ from beverage_matcher.evaluation import (
     summarize_records,
     write_evaluation_csv,
 )
+from beverage_matcher.matcher import MatchResult
 
 
 def _record(
@@ -28,7 +31,7 @@ def _record(
         expected_product=expected_product,
         condition=condition,
         predicted_product=predicted_product,
-        best_candidate="goodbuzz",
+        evidence_candidate="goodbuzz",
         reference_image="goodbuzz/reference.jpg",
         good_matches=12,
         ransac_inliers=9,
@@ -116,7 +119,66 @@ def test_csv_uses_relative_portable_paths_and_stable_numeric_format(tmp_path: Pa
         row = next(csv.DictReader(csv_file))
 
     assert row["query_image"] == "goodbuzz/goodbuzz__normal.jpg"
+    assert row["evidence_candidate"] == "goodbuzz"
     assert row["reference_image"] == "goodbuzz/reference.jpg"
     assert row["inlier_ratio"] == "0.750"
     assert row["score"] == "6.750"
     assert ":/" not in row["query_image"]
+
+
+def test_evaluation_records_metrics_for_the_accepted_candidate(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    references = tmp_path / "references"
+    query_path = tmp_path / "queries" / "mo" / "mo__normal.jpg"
+    query_path.parent.mkdir(parents=True)
+    query_path.touch()
+    strongest_unaccepted = _match_result(
+        "goodbuzz", references / "goodbuzz" / "reference.jpg", 100, 29, 0.29, 8.41, False
+    )
+    lower_accepted = _match_result(
+        "mo", references / "mo" / "reference.jpg", 12, 9, 0.75, 6.75, True
+    )
+    monkeypatch.setattr(
+        evaluation,
+        "match_query_against_references",
+        lambda *_: [strongest_unaccepted, lower_accepted],
+    )
+
+    record = evaluation.evaluate_queries(references, query_path.parents[1])[0]
+
+    assert record.predicted_product == "mo"
+    assert record.evidence_candidate == "mo"
+    assert record.reference_image == "mo/reference.jpg"
+    assert record.good_matches == 12
+    assert record.ransac_inliers == 9
+    assert record.inlier_ratio == 0.75
+    assert record.score == 6.75
+
+
+def _match_result(
+    label: str,
+    reference_path: Path,
+    good_match_count: int,
+    inlier_count: int,
+    inlier_ratio: float,
+    score: float,
+    is_accepted: bool,
+) -> MatchResult:
+    matches = tuple(
+        cv2.DMatch(_queryIdx=index, _trainIdx=index, _imgIdx=0, _distance=1.0)
+        for index in range(good_match_count)
+    )
+    return MatchResult(
+        product_label=label,
+        reference_path=reference_path,
+        good_matches=matches,
+        query_keypoints=(),
+        reference_keypoints=(),
+        homography=None,
+        inlier_mask=(),
+        inlier_count=inlier_count,
+        inlier_ratio=inlier_ratio,
+        score=score,
+        is_accepted=is_accepted,
+    )

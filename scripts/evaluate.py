@@ -78,7 +78,7 @@ def main() -> int:
     for record in failures:
         print(
             f"{record.query_image}: expected={record.expected_product}, "
-            f"predicted={record.predicted_product}, best={record.best_candidate}, "
+            f"predicted={record.predicted_product}, evidence={record.evidence_candidate}, "
             f"good={record.good_matches}, inliers={record.ransac_inliers}, "
             f"ratio={record.inlier_ratio:.3f}, score={record.score:.3f}"
         )

@@ -33,8 +33,10 @@ query → ORB → Hamming KNN matching → ratio filtering → RANSAC → score 
 ```
 
 `UNKNOWN` is recorded when no candidate passes both minimum geometric-evidence
-thresholds. For known-product queries, `UNKNOWN` counts as incorrect. The strongest
-candidate and its measurements remain in the CSV to make such failures inspectable.
+thresholds. For known-product queries, `UNKNOWN` counts as incorrect. The CSV's
+`evidence_candidate` is the accepted candidate when a prediction is accepted;
+otherwise it is the strongest candidate, with all diagnostic metrics referring to
+that same candidate.
 
 ## Results
 
@@ -57,7 +59,7 @@ one accepted wrong-product result and three `UNKNOWN` results.
 
 ## Failure cases
 
-| Query | Expected | Prediction | Best candidate | Good matches | Inliers | Ratio | Score |
+| Query | Expected | Prediction | Evidence candidate | Good matches | Inliers | Ratio | Score |
 | --- | --- | --- | --- | --: | --: | --: | --: |
 | `goodbuzz__glare.jpg` | goodbuzz | UNKNOWN | goodbuzz | 10 | 5 | 0.500 | 2.500 |
 | `mo__glare.jpg` | mo | UNKNOWN | mo | 20 | 6 | 0.300 | 1.800 |
