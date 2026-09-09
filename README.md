@@ -1,37 +1,54 @@
 # beverage-vision-matcher
 
-A small computer-vision experiment exploring local-feature-based beverage product
-matching under changes in viewpoint, lighting, and occlusion. It is intended as a
-clear, testable portfolio exercise in Python and classical computer vision rather
-than a production recognition system.
+A small classical computer-vision experiment that compares a query photograph of
+a beverage product against known reference images. It explores how local feature
+matching behaves under viewpoint changes, low light, occlusion, and glare; it is
+not a production product-recognition system.
 
-## Current status
+## Approach
 
-Task 002 implements the baseline reference-image matching experiment: validated
-image loading, ORB features, Hamming KNN descriptor matching, ratio filtering,
-RANSAC homography verification, geometric inlier scoring, `UNKNOWN` rejection,
-and an optional saved match visualisation. Real beverage evaluation has not been
-performed, so there is no accuracy number and the thresholds below are provisional.
+```text
+Query image → ORB features → Hamming KNN matches → ratio filtering
+            → RANSAC homography → geometric inliers → score/rank → product or UNKNOWN
+```
 
-## Planned direction
+ORB provides binary local descriptors, so OpenCV's Hamming-distance BFMatcher is
+a natural baseline. The ratio test discards ambiguous nearest-neighbour matches.
+RANSAC then rejects correspondences that do not support a shared geometric
+transform. The score is `inlier_count * inlier_ratio`, and a product is accepted
+only with at least 8 RANSAC inliers and a 0.30 inlier ratio.
 
-The pipeline is: ORB features → Hamming KNN matches → ratio filtering → RANSAC
-homography → geometric inliers → score/rank → accepted product or `UNKNOWN`.
-ORB produces binary local descriptors that work directly with Hamming-distance
-matching. Ratio filtering removes ambiguous correspondences, while RANSAC rejects
-matches that do not support a shared geometric transform.
+## Usage
 
-The baseline score is `inlier_count * inlier_ratio`; a candidate must have at
-least 8 RANSAC inliers and an inlier ratio of at least 0.30. These are starting
-parameters, not calibrated claims. Use `python scripts/match.py --help` for the
-single-query CLI. Later evaluation will use real, documented images before making
-any performance conclusion.
+```bash
+python -m pip install -e . -r requirements.txt
+python scripts/match.py --references data/references --query path/to/query.jpg
+python scripts/evaluate.py --references data/references --queries data/queries --output results/evaluation.csv
+```
 
-## Current limitations
+Add `--visualize` to `match.py` to save verified feature correspondences under
+`results/`. The references follow `data/references/<product>/`, and queries use
+`data/queries/<product>/<product>__<condition>.jpg`.
 
-Curved containers do not perfectly obey one planar homography. Glare, severe
-viewpoint changes, low-texture packaging, visually similar designs, and strong
-occlusion can reduce useful geometric evidence. Feature detection, correspondence,
-and geometric consistency are also concepts used in broader multi-view geometry
-pipelines such as structure from motion; this project does not implement SfM or
-3D reconstruction.
+## Baseline experiment
+
+Using the unchanged baseline thresholds, the matcher correctly identified 11 of
+15 known-product queries (73.3%) in a small locally collected experiment with
+three products (`goodbuzz`, `mo`, and `redbull`), one reference image per product,
+and five queries per product. Normal, angle, and low-light conditions each had
+3/3 correct queries; glare and occlusion each had 1/3 correct.
+
+The raw beverage photographs are intentionally local and gitignored. The committed
+[`results/evaluation.csv`](results/evaluation.csv) contains derived measurements
+only. This small, curated dataset is not evidence of general product-recognition
+accuracy, and the baseline thresholds were not tuned on it.
+
+## Limitations and future work
+
+A single planar homography only approximates curved cans and bottles. Packaging
+glare, strong occlusion, viewpoint change, low texture, and visually similar
+designs can reduce reliable correspondences. Future work could evaluate multiple
+references per product, compare SIFT, use a separate calibration/test split, and
+collect a larger independent dataset. Feature detection, correspondence, and
+geometric consistency also connect to multi-view geometry such as structure from
+motion; this project does not implement SfM or 3D reconstruction.

@@ -1,0 +1,16 @@
+query_image,expected_product,condition,predicted_product,evidence_candidate,reference_image,good_matches,ransac_inliers,inlier_ratio,score,accepted,correct
+goodbuzz/goodbuzz__angle.jpg,goodbuzz,angle,goodbuzz,goodbuzz,goodbuzz/reference.jpg,30,19,0.633,12.033,true,true
+goodbuzz/goodbuzz__glare.jpg,goodbuzz,glare,UNKNOWN,goodbuzz,goodbuzz/reference.jpg,10,5,0.500,2.500,false,false
+goodbuzz/goodbuzz__low_light.jpg,goodbuzz,low_light,goodbuzz,goodbuzz,goodbuzz/reference.jpg,14,8,0.571,4.571,true,true
+goodbuzz/goodbuzz__normal.jpg,goodbuzz,normal,goodbuzz,goodbuzz,goodbuzz/reference.jpg,44,34,0.773,26.273,true,true
+goodbuzz/goodbuzz__occlusion.jpg,goodbuzz,occlusion,goodbuzz,goodbuzz,goodbuzz/reference.jpg,72,60,0.833,50.000,true,true
+mo/mo__angle.jpg,mo,angle,mo,mo,mo/reference.jpg,25,8,0.320,2.560,true,true
+mo/mo__glare.jpg,mo,glare,UNKNOWN,mo,mo/reference.jpg,20,6,0.300,1.800,false,false
+mo/mo__low_light.jpg,mo,low_light,mo,mo,mo/reference.jpg,54,40,0.741,29.630,true,true
+mo/mo__normal.jpg,mo,normal,mo,mo,mo/reference.jpg,93,63,0.677,42.677,true,true
+mo/mo__occlusion.jpg,mo,occlusion,redbull,redbull,redbull/reference.jpg,12,9,0.750,6.750,true,false
+redbull/redbull__angle.jpg,redbull,angle,redbull,redbull,redbull/reference.jpg,30,25,0.833,20.833,true,true
+redbull/redbull__glare.jpg,redbull,glare,redbull,redbull,redbull/reference.jpg,29,20,0.690,13.793,true,true
+redbull/redbull__low_light.jpg,redbull,low_light,redbull,redbull,redbull/reference.jpg,81,68,0.840,57.086,true,true
+redbull/redbull__normal.jpg,redbull,normal,redbull,redbull,redbull/reference.jpg,135,123,0.911,112.067,true,true
+redbull/redbull__occlusion.jpg,redbull,occlusion,UNKNOWN,mo,mo/reference.jpg,6,4,0.667,2.667,false,false
