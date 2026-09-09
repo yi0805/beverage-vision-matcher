@@ -1,6 +1,6 @@
 # Evaluation template
 
-Evaluation has not been implemented or measured in Task 001. A later experiment
+Evaluation has not been implemented or measured in Task 002. A later experiment
 should record one row per query image with these fields:
 
 | Query image | Expected product | Predicted product | Condition | Good descriptor matches | RANSAC inliers | Inlier ratio | Score | Outcome |
