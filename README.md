@@ -18,6 +18,15 @@ RANSAC then rejects correspondences that do not support a shared geometric
 transform. The score is `inlier_count * inlier_ratio`, and a product is accepted
 only with at least 8 RANSAC inliers and a 0.30 inlier ratio.
 
+## Example match
+
+![Verified feature correspondences on a synthetic transformed image](docs/example_match.jpg)
+
+This synthetic example shows ORB correspondences that remain after descriptor
+filtering and RANSAC geometric verification. It is a synthetic demonstration,
+separate from the real beverage evaluation dataset whose raw photographs are not
+published.
+
 ## Usage
 
 ```bash
